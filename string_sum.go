@@ -37,7 +37,7 @@ func StringSum (input string) (string, error) {
 
 	// если после удаления пробелов - длина строки нуль - пустое поле
 	if len(s)==0{
-		return "", fmt.Errorf("1: %w", errorEmptyInput)
+		return "", fmt.Errorf("err1: %w", errorEmptyInput)
 	}
 
 	term:=strings.Split(s,"+") // делим строку по плюсам
@@ -45,16 +45,18 @@ func StringSum (input string) (string, error) {
 		for _,s:=range term{
 			if s!="" {
 				numer, err := strconv.Atoi(strings.TrimSpace(s))
-				sum += numer
 				if err != nil {
-					return "", err
-				}}else {
-				return "",errorNotTwoOperands
+					return "", fmt.Errorf("Func: \"Atoi\", Num: \"%s\", Err: %w",s,err)
+					//Func: "Atoi", Num: "24c", Err: strconv.ErrSyntax}, numError: true
+				}
+				sum += numer
+			}else {
+				return "",fmt.Errorf("err2: %w",errorNotTwoOperands)
 			}
 		}
 	}
 	if len(term)>2{
-		return "", fmt.Errorf("2: %w", errorNotTwoOperands)
+		return "", fmt.Errorf("err2: %w", errorNotTwoOperands)
 	}
 
 	if len(term)==1{
@@ -62,17 +64,17 @@ func StringSum (input string) (string, error) {
 		var re = regexp.MustCompile("[0-9]+")
 		nums := re.FindAllString(input, -1)
 		if len(nums)!=2{
-			return "", errorNotTwoOperands
+			return "",fmt.Errorf("err2: %w",  errorNotTwoOperands)
 		}
 		firstInput := strings.Index(s, nums[0])
 		border := firstInput + len(nums[0])
 		firstTerm,err:=strconv.Atoi(strings.TrimSpace(s[:border]))
 		if err!=nil{
-			return "",err
+			return "",fmt.Errorf("Func: \"Atoi\", Num: \"%s\", Err: %w",s[:border],err)
 		}
 		secondTermerr,err:=strconv.Atoi(strings.TrimSpace(s[border:]))
 		if err!=nil{
-			return "",err
+			return "",fmt.Errorf("Func: \"Atoi\", Num: \"%s\", Err: %w",s[border:],err)
 		}
 		sum=firstTerm+secondTermerr
 	}

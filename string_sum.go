@@ -26,10 +26,6 @@ var (
 //
 // Use the errors defined above as described, again wrapping into fmt.Errorf
 
-func main(){
-	fmt.Println(StringSum("24-55"))
-}
-
 var re = regexp.MustCompile("[0-9]+")
 func StringSum (input string) (string, error) {
 	//func StringSum(input string) (output string, err error) {

@@ -56,9 +56,9 @@ func findNums(input string) ([]string, error) {
 	countOperands := len(nums)
 	switch {
 	case countOperands == 0:
-		return nil, fmt.Errorf("errorEmptyInput")
+		return nil, errorEmptyInput
 	case countOperands != 2:
-		return nil, fmt.Errorf("errorNotTwoOperands")
+		return nil, errorNotTwoOperands
 	}
 	return nums, nil
 }

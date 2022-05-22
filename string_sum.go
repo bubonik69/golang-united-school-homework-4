@@ -3,6 +3,7 @@ package string_sum
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -24,45 +25,47 @@ var (
 // with fmt.Errorf function
 //
 // Use the errors defined above as described, again wrapping into fmt.Errorf
-func StringSum(input string) (output string, err error) {
-	//func StringSum(input string) (output string, err error) {
-	// удаляем пробелы
-	var sum int
-	s := strings.TrimSpace(input)
-	// если после удаления пробелов - длина строки нуль - пустое поле
-	if len(s) == 0 {
-		return "", fmt.Errorf("%e", errorEmptyInput)
-	}
+var re = regexp.MustCompile("[0-9]+")
+func StringSum (input string) (string, error) {
+		result, err := sum(input)
+	return result, err
 
-	term := strings.Split(s, "+")
-	if len(term) == 1 {
-		// проводим дополнительную проверку на минусы
-		term = strings.Split(s, "-")
-		if len(term) > 1 {
-			for _, s := range term {
-				if s != "" {
-					numer, err := strconv.Atoi(strings.TrimSpace(s))
-					sum -= numer
-					if err != nil {
-						return "", err
-					}
-				}
-			}
-		} else {
-			return "", errorNotTwoOperands
-		}
-
-	} else {
-		for _, s := range term {
-			if s != "" {
-				numer, err := strconv.Atoi(strings.TrimSpace(s))
-				sum += numer
-				if err != nil {
-					return "", err
-				}
-			}
-
-		}
-	}
-	return strconv.Itoa(sum), nil
 }
+func sum(input string) (string, error) {
+	nums, err := findNums(input)
+	if err != nil {
+		return "", err
+	}
+	input = strings.Replace(input, " ", "", -1)
+	secondInput := strings.Index(input, nums[1])
+	firstVarStr := input[:secondInput-1]
+	firstVar, err := strToInt(firstVarStr)
+	if err != nil {
+		return "", fmt.Errorf("NumError")
+	}
+	secondVarStr := input[secondInput-1:]
+	secondVar, err := strToInt(secondVarStr)
+	if err != nil {
+		return "", fmt.Errorf("NumError")
+	}
+	return strconv.Itoa(firstVar + secondVar), nil
+}
+
+func findNums(input string) ([]string, error) {
+	nums := re.FindAllString(input, -1)
+	countOperands := len(nums)
+	switch {
+	case countOperands == 0:
+		return nil, fmt.Errorf("errorEmptyInput")
+	case countOperands != 2:
+		return nil, fmt.Errorf("errorNotTwoOperands")
+	}
+	return nums, nil
+}
+
+func strToInt(input string) (int, error) {
+	intVar, err := strconv.Atoi(input)
+	if err != nil {
+		return 0, err
+	}
+	return intVar, nil}
